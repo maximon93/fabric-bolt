@@ -22,7 +22,9 @@
                         <div class="panel-heading"><a href="{% url 'projects_project_list' %}">Projects</a></div>
                         <div class="panel-body">
                             {% for project in sidebar_projects %}
-                                <a href="{% url 'projects_project_view' project.pk %}">{{ project }}</a><br/>
+                                {% if project in user_projects or user.user_is_admin %}
+                                    <a href="{% url 'projects_project_view' project.pk %}">{{ project }}</a><br/>
+                                {% endif %}
                             {% empty %}
                                 No Projects<br/>
                             {% endfor %}

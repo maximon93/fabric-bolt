@@ -35,6 +35,9 @@ class ProjectSubPageMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(models.Project, id=kwargs['project_id'])
+        if not request.user.user_is_admin() and self.project not in request.user.projects.all():
+            messages.error(request, 'You don\'t have access to this project')
+            return HttpResponseRedirect(reverse('index'))
         return super(ProjectSubPageMixin, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -51,6 +54,9 @@ class StageSubPageMixin(ProjectSubPageMixin):
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(models.Project, id=kwargs['project_id'])
+        if not request.user.user_is_admin() and self.project not in request.user.projects.all():
+            messages.error(request, 'You don\'t have access to this project')
+            return HttpResponseRedirect(reverse('index'))
         self.stage = get_object_or_404(models.Stage, id=kwargs['stage_id'], project=self.project)
         return super(StageSubPageMixin, self).dispatch(request, *args, **kwargs)
 
@@ -212,6 +218,12 @@ class ProjectUpdate(MultipleGroupRequiredMixin, UpdateView):
     template_name_suffix = '_update'
     success_url = reverse_lazy('projects_project_list')
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.projects.filter(pk=kwargs['pk']) and not request.user.user_is_admin():
+            messages.error(request, 'You don\'t have access to this project')
+            return HttpResponseRedirect(reverse('index'))
+        return super(ProjectUpdate, self).dispatch(request, *args, **kwargs)
+
 
 class ProjectDelete(MultipleGroupRequiredMixin, DeleteView):
     """
@@ -300,7 +312,7 @@ class ProjectConfigurationDelete(MultipleGroupRequiredMixin, ProjectSubPageMixin
 
     def get_success_url(self):
         """Get the url depending on what type of configuration I deleted."""
-        
+
         if self.stage_id:
             url = reverse('projects_stage_view', args=(self.project_id, self.stage_id))
         else:

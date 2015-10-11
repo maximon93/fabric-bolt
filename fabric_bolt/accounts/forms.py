@@ -17,7 +17,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['email', 'first_name', 'last_name', 'user_level', 'is_active', 'template']
+        fields = ['email', 'first_name', 'last_name', 'user_level', 'is_active', 'template', 'projects']
 
     def __init__(self, *args, **kwargs):
         # form instance and initial values

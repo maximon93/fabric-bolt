@@ -13,6 +13,7 @@ from authtools.models import AbstractEmailUser
 from fabric_bolt.core import themes
 
 from .managers import DeployUserManager
+from fabric_bolt.projects.models import Project
 
 
 class DeployUser(AbstractEmailUser):
@@ -23,6 +24,7 @@ class DeployUser(AbstractEmailUser):
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     template = models.CharField(max_length=255, blank=True, choices=themes.TEMPLATE_THEMES, default=themes.YETI)
+    projects = models.ManyToManyField(Project, blank=True)
 
     objects = DeployUserManager()
 
