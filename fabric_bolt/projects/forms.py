@@ -133,6 +133,8 @@ class ConfigurationCreateForm(ConfigurationUpdateForm):
 
 class DeploymentForm(forms.ModelForm):
 
+    comments = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Simple update'}), initial='Simple update')
+
     class Meta:
         fields = ['comments']
         model = models.Deployment
